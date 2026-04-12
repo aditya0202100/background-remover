@@ -68,8 +68,8 @@ export default {
         },
       },
       fontFamily: {
-        display: ["var(--font-display)", "serif"],
-        body: ["var(--font-body)", "sans-serif"],
+        display: ["Inter", "var(--font-display)", "sans-serif"],
+        body: ["Inter", "var(--font-body)", "sans-serif"],
         mono: ["var(--font-mono)", "monospace"],
       },
       borderRadius: {
@@ -78,9 +78,11 @@ export default {
         sm: "calc(var(--radius) - 4px)",
       },
       boxShadow: {
-        xs: "0 1px 2px 0 rgba(0,0,0,0.05)",
-        input: "0 1px 3px 0 rgba(0, 0, 0, 0.08)",
-        card: "0 2px 8px 0 rgba(0, 0, 0, 0.1)",
+        xs: "0 1px 2px 0 rgba(0,0,0,0.2)",
+        input: "0 1px 3px 0 rgba(0, 0, 0, 0.3)",
+        card: "0 4px 24px 0 rgba(0, 0, 0, 0.4)",
+        "glow-primary": "0 0 20px 0 oklch(0.5 0.22 295 / 0.3)",
+        "glow-primary-lg": "0 0 40px 0 oklch(0.5 0.22 295 / 0.25)",
       },
       keyframes: {
         "accordion-down": {
@@ -91,10 +93,15 @@ export default {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        shimmer: {
+          "0%": { backgroundPosition: "-200% 0" },
+          "100%": { backgroundPosition: "200% 0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        shimmer: "shimmer 2s linear infinite",
       },
     },
   },
