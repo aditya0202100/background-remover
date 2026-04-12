@@ -1,0 +1,21 @@
+{
+  "overview": "A browser-based background remover that runs entirely client-side using on-device ML. Upload an image, remove its background in seconds, preview the before/after result, and download as a transparent PNG — no server, no API calls, no privacy concerns.",
+  "features": [
+    "Drag-and-drop image upload with click-to-browse fallback",
+    "Client-side ML background removal using WASM (no external APIs)",
+    "Side-by-side before/after preview",
+    "One-click PNG download with transparent background",
+    "Upload another image to reset the flow",
+    "Responsive design for mobile and desktop"
+  ],
+  "category": "tool",
+  "tags": [
+    "background-removal",
+    "image-processing",
+    "ml",
+    "wasm",
+    "client-side",
+    "privacy-first"
+  ],
+  "last_updated": "2026-04-12T21:07:49.876Z"
+}
