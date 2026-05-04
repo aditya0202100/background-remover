@@ -1,2 +1,20 @@
+type Review = 
+ record {
+   comment: text;
+   id: nat;
+   name: text;
+   rating: nat;
+   timestamp: int;
+ };
+type Analytics = 
+ record {
+   averageRating: float64;
+   starCounts: vec nat;
+   totalCount: nat;
+ };
 service : {
+  deleteReview: (id: nat, password: text) -> (bool);
+  getAnalytics: () -> (Analytics) query;
+  getReviews: () -> (vec Review) query;
+  submitReview: (name: text, rating: nat, comment: text) -> ();
 }

@@ -1,5 +1,8 @@
+import BackgroundEditor from "@/components/BackgroundEditor";
 import ImagePreview from "@/components/ImagePreview";
 import ProcessingOverlay from "@/components/ProcessingOverlay";
+import ReviewModal from "@/components/ReviewModal";
+import ReviewsSection from "@/components/ReviewsSection";
 import UploadZone from "@/components/UploadZone";
 import { Button } from "@/components/ui/button";
 import { useBackgroundRemoval } from "@/hooks/useBackgroundRemoval";
@@ -27,7 +30,7 @@ const HOW_IT_WORKS = [
     step: "02",
     icon: Sparkles,
     title: "Process",
-    desc: "Our on-device AI model instantly analyzes your image and removes the background — entirely in your browser.",
+    desc: "Our on-device AI model instantly analyzes your image and removes the background \u2014 entirely in your browser.",
   },
   {
     step: "03",
@@ -47,8 +50,18 @@ export default function HomePage() {
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalUrl, setOriginalUrl] = useState<string | null>(null);
   const [hasError, setHasError] = useState(false);
-  const { processImage, processedUrl, isProcessing, progress, reset } =
-    useBackgroundRemoval();
+  const [compositedUrl, setCompositedUrl] = useState<string | null>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const {
+    processImage,
+    processedUrl,
+    isProcessing,
+    progress,
+    reset,
+    cancelProcessing,
+    elapsedSeconds,
+    isCancelling,
+  } = useBackgroundRemoval();
 
   const handleFileAccepted = useCallback(
     async (file: File) => {
@@ -56,6 +69,7 @@ export default function HomePage() {
       setOriginalFile(file);
       setOriginalUrl(url);
       setHasError(false);
+      setShowReviewModal(false);
       try {
         await processImage(file);
         toast.success("Background removed successfully!");
@@ -72,17 +86,24 @@ export default function HomePage() {
     setOriginalFile(null);
     setOriginalUrl(null);
     setHasError(false);
+    setCompositedUrl(null);
+    setShowReviewModal(false);
     reset();
   }, [originalUrl, reset]);
+
+  const handleCancel = useCallback(() => {
+    cancelProcessing();
+    // Reset state after a short delay to allow cancel to propagate
+    setTimeout(() => handleReset(), 100);
+  }, [cancelProcessing, handleReset]);
 
   const hasImage = !!originalUrl;
 
   return (
     <>
-      {/* ── Hero ── */}
+      {/* Hero */}
       {!hasImage && (
         <section className="max-w-3xl mx-auto px-6 py-20 flex flex-col items-center gap-8 text-center">
-          {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -90,11 +111,10 @@ export default function HomePage() {
           >
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/25 bg-primary/10 text-primary text-xs font-semibold tracking-wide uppercase">
               <Sparkles className="w-3.5 h-3.5" />
-              AI-Powered · Free · No Signup
+              AI-Powered \u00b7 Free \u00b7 No Signup
             </div>
           </motion.div>
 
-          {/* Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -106,7 +126,6 @@ export default function HomePage() {
             <span className="text-foreground/70">Instantly</span>
           </motion.h1>
 
-          {/* Subtext */}
           <motion.p
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -117,7 +136,6 @@ export default function HomePage() {
             seconds. Nothing ever leaves your browser.
           </motion.p>
 
-          {/* Upload button */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
@@ -126,7 +144,6 @@ export default function HomePage() {
             <UploadZone onFileAccepted={handleFileAccepted} />
           </motion.div>
 
-          {/* Trust badges */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -144,7 +161,6 @@ export default function HomePage() {
             ))}
           </motion.div>
 
-          {/* Scroll indicator */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -166,7 +182,13 @@ export default function HomePage() {
       {/* Processing state */}
       {isProcessing && originalUrl && (
         <div className="max-w-5xl mx-auto px-6 py-12">
-          <ProcessingOverlay progress={progress} originalUrl={originalUrl} />
+          <ProcessingOverlay
+            progress={progress}
+            originalUrl={originalUrl}
+            estimatedRemainingSeconds={Math.max(0, 20 - elapsedSeconds)}
+            onCancel={handleCancel}
+            isCancelling={isCancelling}
+          />
         </div>
       )}
 
@@ -210,14 +232,22 @@ export default function HomePage() {
         </section>
       )}
 
-      {/* Result: before/after */}
+      {/* Result: [Processed image | Change Background] side by side */}
       {!isProcessing && hasImage && processedUrl && (
         <div className="max-w-5xl mx-auto px-6 py-10 flex flex-col gap-6">
           <ImagePreview
-            originalUrl={originalUrl}
+            originalUrl={originalUrl!}
             processedUrl={processedUrl}
+            compositedUrl={compositedUrl ?? undefined}
             originalFile={originalFile}
             onReset={handleReset}
+            onDownload={() => setShowReviewModal(true)}
+            sidebar={
+              <BackgroundEditor
+                processedUrl={processedUrl}
+                onComposited={(url) => setCompositedUrl(url)}
+              />
+            }
           />
           <div className="text-center">
             <p className="text-sm text-muted-foreground">
@@ -235,7 +265,7 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* ── How it works ── */}
+      {/* How it works */}
       {!hasImage && (
         <section
           id="how-it-works"
@@ -253,7 +283,7 @@ export default function HomePage() {
                 How it works
               </h2>
               <p className="text-muted-foreground mt-2 font-body">
-                Three simple steps — no account, no uploads to any server.
+                Three simple steps \u2014 no account, no uploads to any server.
               </p>
             </motion.div>
 
@@ -288,6 +318,14 @@ export default function HomePage() {
             </div>
           </div>
         </section>
+      )}
+
+      {/* Reviews section */}
+      <ReviewsSection />
+
+      {/* Review modal shown after successful removal */}
+      {showReviewModal && (
+        <ReviewModal onClose={() => setShowReviewModal(false)} />
       )}
     </>
   );

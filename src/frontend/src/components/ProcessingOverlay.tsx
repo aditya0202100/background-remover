@@ -4,14 +4,17 @@ import { motion } from "motion/react";
 interface ProcessingOverlayProps {
   progress: number;
   originalUrl: string;
+  estimatedRemainingSeconds: number | null;
+  onCancel: () => void;
+  isCancelling: boolean;
 }
 
 const STEPS = [
-  { threshold: 0, label: "Loading AI model…" },
-  { threshold: 20, label: "Analyzing image…" },
-  { threshold: 50, label: "Detecting edges…" },
-  { threshold: 75, label: "Removing background…" },
-  { threshold: 90, label: "Finalizing result…" },
+  { threshold: 0, label: "Loading AI model\u2026" },
+  { threshold: 20, label: "Analyzing image\u2026" },
+  { threshold: 50, label: "Detecting edges\u2026" },
+  { threshold: 75, label: "Removing background\u2026" },
+  { threshold: 90, label: "Finalizing result\u2026" },
 ];
 
 function getStepLabel(progress: number) {
@@ -24,8 +27,19 @@ function getStepLabel(progress: number) {
 export default function ProcessingOverlay({
   progress,
   originalUrl,
+  estimatedRemainingSeconds,
+  onCancel,
+  isCancelling,
 }: ProcessingOverlayProps) {
   const label = getStepLabel(progress);
+
+  const timeLabel = isCancelling
+    ? "Cancelling\u2026"
+    : progress > 80
+      ? "Almost done\u2026"
+      : estimatedRemainingSeconds !== null && estimatedRemainingSeconds > 0
+        ? `~${estimatedRemainingSeconds}s remaining`
+        : "Estimating\u2026";
 
   return (
     <motion.div
@@ -41,7 +55,7 @@ export default function ProcessingOverlay({
           className="w-full object-contain max-h-80"
           style={{ filter: "brightness(0.6) saturate(0.4)" }}
         />
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/70 backdrop-blur-sm gap-5 px-8">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/70 backdrop-blur-sm gap-4 px-8">
           {/* Spinner */}
           <div className="w-14 h-14 rounded-full bg-card/90 border border-primary/20 shadow-card flex items-center justify-center">
             <Loader2 className="w-7 h-7 text-primary animate-spin" />
@@ -52,7 +66,7 @@ export default function ProcessingOverlay({
               {label}
             </p>
             <p className="text-muted-foreground text-sm mt-0.5">
-              {progress > 0 ? `${progress}%` : "Starting…"}
+              {progress > 0 ? `${progress}%` : "Starting\u2026"}
             </p>
           </div>
 
@@ -69,12 +83,28 @@ export default function ProcessingOverlay({
               transition={{ duration: 0.4, ease: "easeOut" }}
             />
           </div>
+
+          {/* Estimated time */}
+          <p className="text-xs font-semibold text-muted-foreground font-body">
+            {timeLabel}
+          </p>
+
+          {/* Cancel button */}
+          <button
+            type="button"
+            data-ocid="processing.cancel-button"
+            onClick={onCancel}
+            disabled={isCancelling}
+            className="text-xs font-semibold text-muted-foreground hover:text-foreground border border-border/60 hover:border-border rounded-lg px-4 py-1.5 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed bg-card/50"
+          >
+            {isCancelling ? "Cancelling\u2026" : "Cancel"}
+          </button>
         </div>
       </div>
 
       <p className="text-xs text-muted-foreground text-center max-w-xs leading-relaxed">
-        The AI model runs entirely in your browser. This may take 10–30 seconds
-        depending on image size.
+        The AI model runs entirely in your browser. This may take 10\u201330
+        seconds depending on image size.
       </p>
     </motion.div>
   );

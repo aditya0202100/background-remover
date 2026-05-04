@@ -1,21 +1,22 @@
 {
-  "overview": "A browser-based background remover that runs entirely client-side using on-device ML. Upload an image, remove its background in seconds, preview the before/after result, and download as a transparent PNG — no server, no API calls, no privacy concerns.",
+  "overview": "A browser-based AI background remover app styled to match the ClearCut brand. Users upload an image, watch real-time processing progress with time estimates and a cancel option, then get a polished background editor with preset colors, custom RGB, preset/custom images, and AI generation. After each conversion a review popup appears; submitted reviews and star analytics are shown publicly on the homepage.",
   "features": [
-    "Drag-and-drop image upload with click-to-browse fallback",
-    "Client-side ML background removal using WASM (no external APIs)",
-    "Side-by-side before/after preview",
-    "One-click PNG download with transparent background",
-    "Upload another image to reset the flow",
-    "Responsive design for mobile and desktop"
+    "Client-side AI background removal with estimated time and cancel button",
+    "Custom RGB color selector fix in background editor",
+    "Post-conversion review popup (star rating + comment)",
+    "Review section below the tool with all user reviews",
+    "Review analytics card showing average rating and star distribution",
+    "Change Background panel with tabs: preset colors, custom RGB, preset images, upload, AI generator",
+    "Multi-format download (PNG, JPG, WebP)",
+    "Blog, About, Terms, Privacy pages"
   ],
-  "category": "tool",
+  "category": "image-tools",
   "tags": [
     "background-removal",
-    "image-processing",
-    "ml",
-    "wasm",
-    "client-side",
-    "privacy-first"
+    "image-editor",
+    "ai",
+    "reviews",
+    "analytics"
   ],
-  "last_updated": "2026-04-12T21:07:49.876Z"
+  "last_updated": "2026-05-02T14:05:52.648Z"
 }

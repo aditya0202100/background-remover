@@ -8,10 +8,48 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
-export const idlService = IDL.Service({});
+export const Analytics = IDL.Record({
+  'starCounts' : IDL.Vec(IDL.Nat),
+  'totalCount' : IDL.Nat,
+  'averageRating' : IDL.Float64,
+});
+export const Review = IDL.Record({
+  'id' : IDL.Nat,
+  'name' : IDL.Text,
+  'comment' : IDL.Text,
+  'timestamp' : IDL.Int,
+  'rating' : IDL.Nat,
+});
+
+export const idlService = IDL.Service({
+  'deleteReview' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Bool], []),
+  'getAnalytics' : IDL.Func([], [Analytics], ['query']),
+  'getReviews' : IDL.Func([], [IDL.Vec(Review)], ['query']),
+  'submitReview' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text], [], []),
+});
 
 export const idlInitArgs = [];
 
-export const idlFactory = ({ IDL }) => { return IDL.Service({}); };
+export const idlFactory = ({ IDL }) => {
+  const Analytics = IDL.Record({
+    'starCounts' : IDL.Vec(IDL.Nat),
+    'totalCount' : IDL.Nat,
+    'averageRating' : IDL.Float64,
+  });
+  const Review = IDL.Record({
+    'id' : IDL.Nat,
+    'name' : IDL.Text,
+    'comment' : IDL.Text,
+    'timestamp' : IDL.Int,
+    'rating' : IDL.Nat,
+  });
+  
+  return IDL.Service({
+    'deleteReview' : IDL.Func([IDL.Nat, IDL.Text], [IDL.Bool], []),
+    'getAnalytics' : IDL.Func([], [Analytics], ['query']),
+    'getReviews' : IDL.Func([], [IDL.Vec(Review)], ['query']),
+    'submitReview' : IDL.Func([IDL.Text, IDL.Nat, IDL.Text], [], []),
+  });
+};
 
 export const init = ({ IDL }) => { return []; };

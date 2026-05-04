@@ -1,5 +1,6 @@
 import Layout from "@/components/Layout";
 import AboutPage from "@/pages/AboutPage";
+import BlogPage from "@/pages/BlogPage";
 import HomePage from "@/pages/HomePage";
 import PrivacyPage from "@/pages/PrivacyPage";
 import TermsPage from "@/pages/TermsPage";
@@ -47,9 +48,16 @@ const privacyRoute = createRoute({
   component: PrivacyPage,
 });
 
+const blogRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: "/blog",
+  component: BlogPage,
+});
+
 const routeTree = rootRoute.addChildren([
   indexRoute,
   aboutRoute,
+  blogRoute,
   termsRoute,
   privacyRoute,
 ]);

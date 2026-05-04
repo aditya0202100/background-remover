@@ -3,6 +3,7 @@ import { Scissors } from "lucide-react";
 
 const NAV_LINKS = [
   { to: "/about", label: "About" },
+  { to: "/blog", label: "Blog" },
   { to: "/terms", label: "Terms" },
   { to: "/privacy", label: "Privacy" },
 ];
